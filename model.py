@@ -1,24 +1,33 @@
-import base64, io
+
+import base64
+import io
 import librosa
 import numpy as np
 import soundfile as sf
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
+import joblib
+
 
 class AudioFeatureExtractor:
-    """Extract audio features for voe detection"""
+    """Extract audio features for voice detection"""
     
     def __init__(self, sr=22050, n_mfcc=20):
         self.sr = sr
         self.n_mfcc = n_mfcc
 
-    def base64_to_audio(self,audioBase64: str):
-    	try:
-    		audio_bytes = base64.b64decode(audioBase64)
-    		audio_buffer = io.BytesIO(audio_bytes)
-    		# Load audio with librosa
-    		y, sr = librosa.load(audio_buffer, sr=self.sr)
-    		return y, sr
-    	except Exception as e:
-    		raise ValueError(f"Error decoding audio: {str(e)}")
+    def base64_to_audio(self, audioBase64: str):
+        try:
+            audio_bytes = base64.b64decode(audioBase64)
+            audio_buffer = io.BytesIO(audio_bytes)
+            # Load audio with librosa
+            y, sr = librosa.load(audio_buffer, sr=self.sr)
+            return y, sr
+        except Exception as e:
+            raise ValueError(f"Error decoding audio: {str(e)}")
 
     def extract_features(self, audio_data, sr=None):
         """
@@ -95,6 +104,7 @@ class AudioFeatureExtractor:
         """Extract features directly from base64 string"""
         audio_data, sr = self.base64_to_audio(audioBase64)
         return self.extract_features(audio_data, sr)
+
 
 class VoiceDetectionModel:
     """ML Model for detecting AI vs Human voice"""
@@ -245,7 +255,7 @@ class VoiceDetectionModel:
         else:
             print("Feature importance not available for this model type")
             return None
-            
+
 
 def create_sample_dataset(n_human=100, n_ai=100, duration=3, sr=22050):
     """
