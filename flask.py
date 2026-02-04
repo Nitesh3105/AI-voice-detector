@@ -39,9 +39,9 @@ def analyze_voice(
 ):
     y, sr = decode_base64_mp3(payload.audioBase64)
 
-    model = VoiceDetectionModel()
-	model.load("voice_detection_model.pkl")
-	result=model.predict_from_base64(audioBase64)
+    Model = model.VoiceDetectionModel()
+	Model.load("voice_detection_model.pkl")
+	result=Model.predict_from_base64(audioBase64)
 
     return {
     "status": "success",
