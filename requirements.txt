@@ -3,3 +3,4 @@ librosa==0.10.1
 soundfile
 fastapi
 uvicorn
+setuptools
