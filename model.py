@@ -22,10 +22,16 @@ class AudioFeatureExtractor:
     def base64_to_audio(self, audioBase64: str):
         try:
             audio_bytes = base64.b64decode(audioBase64)
-            audio_buffer = io.BytesIO(audio_bytes)
+            with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+                tmp.write(audio_bytes)
+                tmp_path = tmp.name
+
+            y, sr = librosa.load(tmp_path, sr=self.sr)
+            return y, sr
+            '''audio_buffer = io.BytesIO(audio_bytes)
             # Load audio with librosa
             y, sr = librosa.load(audio_buffer, sr=self.sr)
-            return y, sr
+            return y, sr'''
         except Exception as e:
             raise ValueError(f"Error decoding audio: {str(e)}")
 
